@@ -46,6 +46,6 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
-          cd starter/backend/kustomize/base
+          cd starter/backend/k8s
           kustomize edit set image backend=$ECR_REGISTRY/${{ secrets.ECR_BACKEND_REPO }}:$IMAGE_TAG
           kustomize build . | kubectl apply -f -
