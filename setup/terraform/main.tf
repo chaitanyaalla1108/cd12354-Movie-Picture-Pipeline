@@ -188,7 +188,7 @@ resource "aws_iam_role_policy_attachment" "eks_service" {
 ##################
 # Track latest release for the given k8s version
 data "aws_ssm_parameter" "eks_ami_release_version" {
-  name = "/aws/service/eks/optimized-ami/${aws_eks_cluster.main.version}/amazon-linux-2/recommended/release_version"
+  name = "/aws/service/eks/optimized-ami/${var.k8s_version}/amazon-linux-2023/x86_64/standard/recommended/release_version"
 }
 
 resource "aws_eks_node_group" "main" {
@@ -327,4 +327,20 @@ data "aws_iam_policy_document" "github_policy" {
     actions   = ["ecr:*", "eks:*", "ec2:*", "iam:GetUser"]
     resources = ["*"]
   }
+}
+
+resource "aws_iam_role" "nodes" {
+  name = "udacity-node-group"
+  
+  # Temporary minimal policy required by schema
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
 }

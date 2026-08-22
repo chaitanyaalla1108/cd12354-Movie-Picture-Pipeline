@@ -39,15 +39,15 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --build-arg REACT_APP_MOVIE_API_URL=http://localhost:5000 -t $ECR_REGISTRY/${{ secrets.ECR_FRONTEND_REPO }}:$IMAGE_TAG starter/frontend
+          docker build --build-arg REACT_APP_MOVIE_API_URL=http://a2bfb876c0748486f8bb12e4ad5e4166-754180400.us-east-1.elb.amazonaws.com -t $ECR_REGISTRY/${{ secrets.ECR_FRONTEND_REPO }}:$IMAGE_TAG starter/frontend
           docker push $ECR_REGISTRY/${{ secrets.ECR_FRONTEND_REPO }}:$IMAGE_TAG
       - uses: azure/setup-kubectl@v3
       - name: Deploy to Kubernetes
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
-          cd starter/frontend/k8s
-          kustomize edit set image frontend=$ECR_REGISTRY/${{ secrets.ECR_FRONTEND_REPO }}:$IMAGE_TAG
-          kustomize build . | kubectl apply -f -
+         env:
+         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+         IMAGE_TAG: ${{ github.sha }}
+         run: |
+           echo "Validating Kubernetes Manifests..."
+           cd starter/frontend/k8s
+           kustomize edit set image frontend=$ECR_REGISTRY/${{ secrets.ECR_FRONTEND_REPO }}:$IMAGE_TAG
+           kustomize build .

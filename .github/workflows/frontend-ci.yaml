@@ -36,5 +36,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker build --build-arg REACT_APP_MOVIE_API_URL=http://localhost:5000 -t frontend:ci .
+      - run: docker build --build-arg REACT_APP_MOVIE_API_URL=http://a2bfb876c0748486f8bb12e4ad5e4166-754180400.us-east-1.elb.amazonaws.com -t frontend:ci .
         working-directory: starter/frontend
