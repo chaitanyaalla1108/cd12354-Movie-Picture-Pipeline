@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function MovieDetail({ movie }) {
+function MovieDetails({ movie }) {
   const [details, setDetails] = useState(null);
+
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_MOVIE_API_URL}/movies/${movie.id}`).then((response) => {
-      setDetails(response.data);
-    });
+    if (movie && movie.id) {
+      axios
+        .get(`http://ae0a38c41e72c476abcc9e12fdaba59b-1758238877.us-east-1.elb.amazonaws.com/movies/${movie.id}`)
+        .then((response) => {
+          setDetails(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching movie details:', error);
+        });
+    }
   }, [movie]);
+
+  if (!movie) return null;
 
   return (
     <div>
-      <h2>{details?.movie.title}</h2>
-      <p>{details?.movie.description}</p>
+      <h2>Movie Details</h2>
+      <h3>{details?.title || movie.title}</h3>
+      <p>{details?.description || details?.synopsis || ''}</p>
     </div>
   );
 }
 
-export default MovieDetail;
+export default MovieDetails;

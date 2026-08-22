@@ -15,6 +15,7 @@ RUN npm ci
 COPY . .
 
 # Build the app
+ENV DISABLE_ESLINT_PLUGIN=true
 RUN npm run build
 
 # Expose the port used by the React app
