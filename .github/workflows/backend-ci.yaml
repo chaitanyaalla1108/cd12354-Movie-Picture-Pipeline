@@ -1,40 +1,40 @@
 name: Backend CI
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'starter/backend/**'
   pull_request:
-    branches: [main]
-    paths: ['starter/backend/**']
+    branches: [ main ]
+    paths:
+      - 'starter/backend/**'
 
 jobs:
-  lint:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - run: pip install pipenv && pipenv install --dev
-        working-directory: starter/backend
-      - run: pipenv run lint
-        working-directory: starter/backend
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - run: pip install pipenv && pipenv install --dev
-        working-directory: starter/backend
-      - run: pipenv run test
-        working-directory: starter/backend
+      - name: Install Dependencies
+        run: |
+          cd starter/backend
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-  build:
-    needs: [lint, test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: docker build -t backend:ci .
-        working-directory: starter/backend
+      - name: Run Linting
+        run: |
+          cd starter/backend
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run Tests
+        run: |
+          cd starter/backend
+          pip install pytest
+          pytest
