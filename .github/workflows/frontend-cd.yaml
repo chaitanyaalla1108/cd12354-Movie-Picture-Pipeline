@@ -24,7 +24,7 @@ jobs:
       - name: Run tests
         run: |
           cd starter/frontend
-          npm test -- --watchAll=false --if-present
+          npm test -- --watchAll=false
 
   deploy:
     needs: lint-and-test
