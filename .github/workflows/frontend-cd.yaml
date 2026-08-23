@@ -3,7 +3,7 @@ name: Frontend Continuous Deployment
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [main]
     paths: ['starter/frontend/**']
 
 jobs:
@@ -16,13 +16,13 @@ jobs:
         with:
           node-version: '18'
       - name: Install and Fix Linting
-      - run: |
+        run: |
           cd starter/frontend
           npm ci
           npm run lint -- --fix || true
           npm run lint --if-present
       - name: Run tests
-      - run: |
+        run: |
           cd starter/frontend
           npm test -- --watchAll=false --if-present
 
@@ -40,19 +40,18 @@ jobs:
       - id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and push Docker image
+      - name: Build and Push Docker Image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_FRONTEND_REPO }}
-          IMAGE_TAG: ${{ github.sha }}
+         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+         IMAGE_TAG: ${{ github.sha }}
         run: |
           cd starter/frontend
-          docker build --build-arg REACT_APP_MOVIE_API_URL=${{ vars.BACKEND_API_URL }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/${{ secrets.ECR_FRONTEND_REPO }}:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/${{ secrets.ECR_FRONTEND_REPO }}:$IMAGE_TAG
 
-      - name: Setup kubectl & EKS kubeconfig
-        run:  |
-          aws eks update-kubeconfig --name cluster --region ${{ secrets.AWS_REGION }}
+      - uses: azure/setup-kubectl@v3
+      - name: Update Kubeconfig
+        run: aws eks update-kubeconfig --name cluster --region ${{ secrets.AWS_REGION }}
 
       - name: Deploy to Kubernetes
         env:
