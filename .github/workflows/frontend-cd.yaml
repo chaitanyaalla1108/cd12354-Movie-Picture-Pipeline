@@ -15,13 +15,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+      - name: Install and Fix Linting
       - run: |
+          cd starter/frontend
           npm ci
-          npx prettier --write .
+          npm run lint -- --fix || true
           npm run lint --if-present
-        working-directory: starter/frontend
-      - run: npm test -- --watchAll=false --if-present
-        working-directory: starter/frontend
+      - name: Run tests
+      - run: |
+          cd starter/frontend
+          npm test -- --watchAll=false --if-present
 
   deploy:
     needs: lint-and-test
