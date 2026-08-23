@@ -15,7 +15,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - run: npm ci && npm run lint --if-present
+      - run: |
+          npm ci
+          npx prettier --write .
+          npm run lint --if-present
         working-directory: starter/frontend
       - run: npm test -- --watchAll=false --if-present
         working-directory: starter/frontend
