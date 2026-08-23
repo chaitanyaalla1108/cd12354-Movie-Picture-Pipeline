@@ -54,6 +54,6 @@ jobs:
     needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
-      - name: Build Check
-        run: echo "Backend build and tests passed successfully"
+      - name: Build Docker Image
+        run: docker build -t backend.ci starter/backend
     
