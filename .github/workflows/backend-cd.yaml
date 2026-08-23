@@ -1,4 +1,4 @@
-name: Backend CD
+name: Backend Continuous Deployment
 
 on:
   workflow_dispatch:
@@ -32,6 +32,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build and Push Docker Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -40,6 +41,9 @@ jobs:
           docker build -t $ECR_REGISTRY/${{ secrets.ECR_BACKEND_REPO }}:$IMAGE_TAG starter/backend
           docker push $ECR_REGISTRY/${{ secrets.ECR_BACKEND_REPO }}:$IMAGE_TAG
       - uses: azure/setup-kubectl@v3
+      - name: Update Kubeconfig
+        run: aws eks update-kubeconfig --name cluster --region ${{ secrets.AWS_REGION }}
+
       - name: Deploy to Kubernetes
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -48,4 +52,4 @@ jobs:
           echo "Validating Kubernetes Manifests..."
           cd starter/backend/k8s
           kustomize edit set image backend=$ECR_REGISTRY/${{ secrets.ECR_BACKEND_REPO }}:$IMAGE_TAG
-          kustomize build . 
+          kustomize build . | kubectl apply -f - 

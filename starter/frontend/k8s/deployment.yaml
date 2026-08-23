@@ -20,5 +20,5 @@ spec:
           ports:
           - containerPort: 3000
           env:
-          - name: POSTGRES_HOST_URL
-            value: "http://a2bfb876c0748486f8bb12e4ad5e4166-754180400.us-east-1.elb.amazonaws.com"
+          - name: REACT_APP_MOVIE_API_URL
+            value: "http://backend:5000"
