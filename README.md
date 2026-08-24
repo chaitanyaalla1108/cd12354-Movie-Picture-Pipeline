@@ -7,7 +7,7 @@
 ### Screenshots
 
 *Frontend Deployment:*
-![Frontend CD](Screenshots/frontendcd_ss.PNG)
+![Frontend CD](Screenshots/frontendfinal_ss.PNG)
 
 *Backend Deployment:*
 ![Backend CD](Screenshots/backendcd_ss.PNG)
