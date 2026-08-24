@@ -12,6 +12,13 @@
 *Backend Deployment:*
 ![Backend CD](Screenshots/backendcd_ss.PNG)
 
+*Frontend Integration:*
+![Frontend CI](Screenshots/frontendci_ss.PNG)
+
+*Backend Integration:*
+![Backend CI](Screenshots/backendci_ss.PNG)
+
+
 *Pipeline Output:*
 ![Pipeline Output](Screenshots/moviepicturepipeline_output.PNG)
 
